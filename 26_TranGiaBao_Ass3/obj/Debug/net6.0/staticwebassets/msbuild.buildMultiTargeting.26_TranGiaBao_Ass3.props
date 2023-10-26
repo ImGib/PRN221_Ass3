@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\26_TranGiaBao_Ass3.props" />
+</Project>

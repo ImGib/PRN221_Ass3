@@ -1,0 +1,122 @@
+﻿
+@using _26_TranGiaBao_Ass3.Utils;
+@model IEnumerable<_26_TranGiaBao_Ass3.Models.Posts>
+
+@{
+    ViewData["Title"] = "Index";
+    var searchValue = ViewData["searchValue"] as string;
+    var pageIndex = Convert.ToInt32(ViewData["pageIndex"]);
+    var PostResult = ViewData["PostResult"] as Paganation<Posts>;
+    var HasPreviousPage = PostResult.HasPreviousPage ? "" : "disabled";
+    var HasNextPage = PostResult.HasNextPage ? "" : "disabled";
+
+    var startDate = DateTime.Parse(ViewData["startDate"].ToString());
+    var endDate = DateTime.Parse(ViewData["endDate"].ToString());
+}
+
+<h1>All Posts</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<form method="get" asp-action="Index">
+    <div class="container row">
+        <h3>Search</h3>
+        <div class="col-auto">
+            <input class="form-control" name="searchValue" value="@searchValue" style="width:300px" placeholder="Input Search Value" />
+        </div>
+        <div class="col-auto"><label class="control-label">Start Date</label></div>
+        <div class="col-auto">
+            <input type="date" class="form-control" name="startDate" value="@startDate" />
+        </div>
+        <div class="col-auto"><label class="control-label">End Date</label></div>
+        <div class="col-auto">
+            <input type="date" class="form-control" name="endDate" value="@endDate" />
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Author
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UpdatedDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Content)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PublishStatus)
+            </th>
+            <th>
+                Category
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in PostResult)
+        {
+            <tr id="post_@item.PostID">
+                <td>
+                @Html.DisplayFor(modelItem => item.User.Fullname)
+            </td>
+                <td>
+                @Html.DisplayFor(modelItem => item.CreatedDate)
+            </td>
+                <td>
+                @Html.DisplayFor(modelItem => item.UpdatedDate)
+            </td>
+                <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+                <td>
+                @Html.DisplayFor(modelItem => item.Content)
+            </td>
+                <td>
+                @Html.DisplayFor(modelItem => item.PublishStatus)
+            </td>
+                <td>
+                @Html.DisplayFor(modelItem => item.Category.CategoryName)
+            </td>
+                <td>
+                <a asp-action="Edit" asp-route-id="@item.PostID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.PostID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.PostID">Delete</a>
+            </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+<a asp-page="/Posts/Index"
+   asp-route-pageIndex="@(pageIndex -1)"
+   asp-route-searchValue="@searchValue"
+   asp-route-startDate="@startDate"
+   asp-route-endDate="@endDate"
+class="btn btn-primary @HasPreviousPage">Previous</a>
+
+<a asp-page="/Posts/Index"
+   asp-route-pageIndex="@(pageIndex +1)"
+   asp-route-searchValue="@searchValue"
+   asp-route-startDate="@startDate"
+   asp-route-endDate="@endDate"
+   class="btn btn-primary @HasNextPage">Next</a>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/js/site.js"></script>
+<script src="~/microsoft/signalr/dist/browser/signalr.js"></script>

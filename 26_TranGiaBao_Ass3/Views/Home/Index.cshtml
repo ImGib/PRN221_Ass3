@@ -1,0 +1,52 @@
+﻿@using _26_TranGiaBao_Ass3.Controllers;
+@model HomeSearch
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<form method="get" asp-action="Index">
+    <div class="container row">
+        <h4>Search</h4>
+        <div class="col-auto">
+            <input class="form-control" asp-for="SearchValue" style="width:300px" placeholder="Input Search Value" />
+        </div>
+        <div class="col-auto">
+            <select class="form-control" asp-for="opt_search" asp-items="ViewBag.SearchOpts"></select>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </div>
+</form>
+
+@if (Model.Posts != null && Model.Posts.Any())
+{
+    <h4>Search Results</h4>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Category</th>
+                <th>Created Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var post in Model.Posts)
+            {
+                <tr>
+                    <td>@post.PostID</td>
+                    <td>@post.Title</td>
+                    <td>@post.User.Fullname</td>
+                    <td>@post.Category.CategoryName</td>
+                    <td>@post.CreatedDate</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+} else
+{
+    
+}
