@@ -8,6 +8,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace _26_TranGiaBao_Ass3.Controllers
 {
+    public class PostsDto
+    {
+        public int PostId { get; set; }
+        public DateTime? CreatedDate { get; set; }
+        public DateTime? UpdateDate { get; set; }
+        public string Title { get; set; }
+        public string Content { get; set; }
+        public bool? PublishStatus { get; set; }
+        public string AuthorName { get; set; }
+        public string CategoryName { get; set; }
+    }
     public class PostsController : Controller
     {
         private readonly SignalRContext _context;
@@ -17,13 +28,24 @@ namespace _26_TranGiaBao_Ass3.Controllers
             _context = context;
             _hubContext = hubContext;
         }
-        [HttpGet]
-        public IActionResult GetPosts(int id)
-        {
-            var res = _context.Posts.SingleOrDefault(p => p.PostID == id);
-            //var res = _context.Posts.Include(p => p.User).Include(p => p.Category).ToList();
-            return Ok(res);
-        }
+        //[HttpGet]
+        //public IActionResult GetPosts()
+        //{
+        //    //var res = _context.Posts.SingleOrDefault(p => p.PostID == id);
+        //    var res = _context.Posts.Include(p => p.User).Include(p => p.Category).ToList();
+        //    var res_2 = res.Select(p => new
+        //    {
+        //        p.PostID,
+        //        p.AuthorID,
+        //        p.CreatedDate,
+        //        p.UpdatedDate,
+        //        AuthorName = p.User.Fullname,
+        //        CategoryName = p.Category.CategoryName,
+        //        p.PublishStatus,
+        //        p.Title
+        //    });
+        //    return Ok(res_2);
+        //}
         // GET: Posts
         public async Task<IActionResult> Index(int? pageIndex, string searchValue, DateTime? startDate, DateTime? endDate)
         {
@@ -53,7 +75,7 @@ namespace _26_TranGiaBao_Ass3.Controllers
 
                 if (endDate != null)
                 {
-                    posts = posts.Where(p => p.CreatedDate >= endDate);
+                    posts = posts.Where(p => p.CreatedDate <= endDate);
                 }
 
                 Paganation<Posts> result = await Paganation<Posts>.CreateAsync(posts.OrderBy(x => x.CreatedDate), pageIndex ?? 1, pageSize);
@@ -105,7 +127,7 @@ namespace _26_TranGiaBao_Ass3.Controllers
             {
                 _context.Add(posts);
                 await _context.SaveChangesAsync();
-                await _hubContext.Clients.All.SendAsync("LoadPosts", posts.PostID);
+                await _hubContext.Clients.All.SendAsync("LoadPosts");
                 return RedirectToAction(nameof(Index));
             }
             return View(posts);
@@ -146,7 +168,7 @@ namespace _26_TranGiaBao_Ass3.Controllers
                 try
                 {
                     _context.Update(posts);
-                    await _hubContext.Clients.All.SendAsync("LoadPosts", posts.PostID);
+                    await _hubContext.Clients.All.SendAsync("LoadPosts");
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -199,7 +221,7 @@ namespace _26_TranGiaBao_Ass3.Controllers
             }
 
             await _context.SaveChangesAsync();
-            await _hubContext.Clients.All.SendAsync("LoadPosts", posts.PostID);
+            await _hubContext.Clients.All.SendAsync("LoadPosts");
             return RedirectToAction(nameof(Index));
         }
 

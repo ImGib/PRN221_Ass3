@@ -1,40 +1,48 @@
 ﻿$(() => {
+    LoadProdData();
+    var connection = new signalR.HubConnectionBuilder().withUrl("/postSignalR").build();
 
-    var connection = new signalR.HubConnectionBuilder().withUrl("/signalrServer").build();
-    connection.start();
+    connection.start().then(function () {
+        console.log("SignalR connection established.");
+    }).catch(function (error) {
+        console.error("SignalR connection error: " + error);
+    });
 
-    connection.on("LoadPosts", function (id) {
-        LoadProdData(id);
-    })
+    connection.on("LoadPosts", function () {
+        LoadProdData();
+    });
 
-    const LoadProdData = (id) => {
+    function LoadProdData() {
+        console.log("check")
         var tr = '';
         $.ajax({
-            url: 'Posts/GetPosts',
+            url: '/Posts/GetPosts',
             method: 'GET',
-            data: {id:id},
-            success: (result) => {
-                console.log(result)
-                tr += `<tr>
-                    <td> ${result.authorID} </td>
-                    <td> ${result.createdDate} </td>
-                    <td> ${result.updatedDate} </td>
-                    <td> ${result.title} </td>
-                    <td> ${result.content} </td>
-                    <td> ${result.publishStatus} </td>
-                    <td> ${result.categoryID} </td>
-                    <td>
-                        <a href='../Posts/Edit?id=${id}'>Edit</a> |
-                        <a href='../Posts/Details?id=${id}'>Details</a> |
-                        <a href='../Posts/Delete?id=${id}'>Delete</a>
-                    </td>
-                    </tr>`;
-
-                $("#post_" + id).html(tr);
+            success: function (result) {
+                console.log(result);
+                $.each(result, function (k, v) {
+                    tr += `<tr>
+                        <td> ${v.authorName}</td> 
+                        <td> ${v.createdDate}</td> 
+                        <td> ${v.updateDate}</td> 
+                        <td> ${v.title}</td> 
+                        <td> ${v.content}</td> 
+                        <td> ${v.publishStatus}</td> 
+                        <td> ${v.categoryName}</td> 
+                        <td>
+                            <a href='../Posts/Edit?id=${v.postId}'>Edit </a> | 
+                            <a href='../Posts/Details?id=${v.postId}'>Details</a> | 
+                            <a href='../Posts/Delete?id=${v.postId}'>Delete</a>
+                        </td> 
+                        </tr>`;
+                });
+                $("#tableBody").html(tr);
             },
-            error: (error) => {
-                console.log(error)
+            error: function (error) {
+                console.log(error);
             }
         });
     }
-})
+
+
+});

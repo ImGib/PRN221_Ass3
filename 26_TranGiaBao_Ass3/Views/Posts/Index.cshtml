@@ -28,11 +28,11 @@
         </div>
         <div class="col-auto"><label class="control-label">Start Date</label></div>
         <div class="col-auto">
-            <input type="date" class="form-control" name="startDate" value="@startDate" />
+            <input type="date" class="form-control" name="startDate" value="@startDate.ToString("yyyy-MM-dd")" />   
         </div>
         <div class="col-auto"><label class="control-label">End Date</label></div>
         <div class="col-auto">
-            <input type="date" class="form-control" name="endDate" value="@endDate" />
+            <input type="date" class="form-control" name="endDate" value="@endDate.ToString("yyyy-MM-dd")" />
         </div>
         <div class="col-auto">
             <button type="submit" class="btn btn-primary">Search</button>
@@ -73,13 +73,13 @@
             <tr id="post_@item.PostID">
                 <td>
                 @Html.DisplayFor(modelItem => item.User.Fullname)
-            </td>
+                </td>
                 <td>
-                @Html.DisplayFor(modelItem => item.CreatedDate)
-            </td>
+                    @Html.DisplayFor(modelItem => item.CreatedDate)
+                </td>
                 <td>
-                @Html.DisplayFor(modelItem => item.UpdatedDate)
-            </td>
+                    @Html.DisplayFor(modelItem => item.UpdatedDate)
+                </td>
                 <td>
                 @Html.DisplayFor(modelItem => item.Title)
             </td>
@@ -93,10 +93,10 @@
                 @Html.DisplayFor(modelItem => item.Category.CategoryName)
             </td>
                 <td>
-                <a asp-action="Edit" asp-route-id="@item.PostID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.PostID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.PostID">Delete</a>
-            </td>
+                    <a asp-action="Edit" asp-route-id="@item.PostID">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.PostID">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.PostID">Delete</a>
+                </td>
             </tr>
         }
     </tbody>
@@ -118,5 +118,22 @@ class="btn btn-primary @HasPreviousPage">Previous</a>
    class="btn btn-primary @HasNextPage">Next</a>
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/js/site.js"></script>
 <script src="~/microsoft/signalr/dist/browser/signalr.js"></script>
+
+
+<script>
+
+    var connection = new signalR.HubConnectionBuilder().withUrl("/signalrServer").build();
+
+    connection.start().then(function () {
+        console.log('SignalR Started...')
+    }).catch(function (err) {
+        return console.error(err.toString());
+    });
+
+    connection.on("LoadPosts", function () {
+        location.href="/Posts"
+    });
+
+
+</script>
